@@ -9,6 +9,10 @@ By doing so, it's basically as if we emulate a minimalist Android environment in
 
 ## Changelog
 
+### v1.0.1
+
+- Added front touch mapping for L2/L3/R2/R3 on non PSTV devices.
+
 ### v1.0
 
 - Initial release.
