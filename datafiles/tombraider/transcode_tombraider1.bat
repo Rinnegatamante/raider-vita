@@ -1,0 +1,9 @@
+ffmpeg -i tombraider1/VISION.mp4 -c:v libx264 -preset slow -crf 22 -c:a copy tombraider1/VISION_VITA.mp4
+ffmpeg -i tombraider1/CANYON.mp4 -c:v libx264 -preset slow -crf 22 -c:a copy tombraider1/CANYON_VITA.mp4
+ffmpeg -i tombraider1/CAFE.mp4 -c:v libx264 -preset slow -crf 22 -c:a copy tombraider1/CAFE_VITA.mp4
+ffmpeg -i tombraider1/END.mp4 -c:v libx264 -preset slow -crf 22 -c:a copy tombraider1/END_VITA.mp4
+ffmpeg -i tombraider1/LIFT.mp4 -c:v libx264 -preset slow -crf 22 -c:a copy tombraider1/LIFT_VITA.mp4
+ffmpeg -i tombraider1/MANSION.mp4 -c:v libx264 -preset slow -crf 22 -c:a copy tombraider1/MANSION_VITA.mp4
+ffmpeg -i tombraider1/PRISON.mp4 -c:v libx264 -preset slow -crf 22 -c:a copy tombraider1/PRISON_VITA.mp4
+ffmpeg -i tombraider1/PYRAMID.mp4 -c:v libx264 -preset slow -crf 22 -c:a copy tombraider1/PYRAMID_VITA.mp4
+ffmpeg -i tombraider1/SNOW.mp4 -c:v libx264 -preset slow -crf 22 -c:a copy tombraider1/SNOW_VITA.mp4
