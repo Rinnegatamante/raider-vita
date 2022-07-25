@@ -3296,6 +3296,10 @@ int main(int argc, char *argv[]) {
 	sceAppUtilInit(&init_param, &boot_param);
 	
 	sceCtrlSetSamplingModeExt(SCE_CTRL_MODE_ANALOG_WIDE);
+	uint8_t is_pstv = sceCtrlIsMultiControllerSupported() ? GL_TRUE : GL_FALSE;
+	if (!is_pstv) {
+		sceTouchSetSamplingState(SCE_TOUCH_PORT_FRONT, SCE_TOUCH_SAMPLING_STATE_START);
+	}
 
 	scePowerSetArmClockFrequency(444);
 	scePowerSetBusClockFrequency(222);
@@ -3310,11 +3314,13 @@ int main(int argc, char *argv[]) {
 	
 	// Generating selected game path
 	char fname[256];
-	int8_t game_idx;
+	int8_t game_idx = 1;
 	FILE *f = fopen("ux0:data/tombraider.tmp", "rb");
-	fread(&game_idx, 1, 1, f);
-	fclose(f);
-	sceIoRemove("ux0:data/tombraider.tmp");
+	if (f) {
+		fread(&game_idx, 1, 1, f);
+		fclose(f);
+		sceIoRemove("ux0:data/tombraider.tmp");
+	}
 	sprintf(DATA_PATH, "ux0:data/tombraider/tombraider%d", game_idx);
 	
 	printf("Loading libmain\n");
@@ -3487,6 +3493,28 @@ int main(int argc, char *argv[]) {
 		
 		// Handle controls
 		sceCtrlPeekBufferPositiveExt2(0, &pad, 1);
+		if (!is_pstv) {
+			// Rearpad support for L2/R2/L3/R3 emulation
+			SceTouchData touch;
+			sceTouchPeek(SCE_TOUCH_PORT_FRONT, &touch, 1);
+			for (int j = 0; j < touch.reportNum; j++) {
+				int x = touch.report[j].x;
+				int y = touch.report[j].y;
+				if (x > 960) {
+					if (y > 544) {
+						pad.buttons |= SCE_CTRL_R3;
+					} else {
+						pad.buttons |= SCE_CTRL_R2;
+					}
+				} else {
+					if (y > 544) {
+						pad.buttons |= SCE_CTRL_L3;
+					} else {
+						pad.buttons |= SCE_CTRL_L2;
+					}
+				}
+			}
+		}
 		if (pad.buttons != oldpad) {
 			for (int i = 0; i < sizeof(btn_map) / sizeof(*btn_map); i++) {
 				if (btn_map[i]) {
