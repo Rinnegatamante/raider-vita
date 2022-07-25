@@ -3377,7 +3377,7 @@ int main(int argc, char *argv[]) {
 	void (*onNativeJoystickButton) (void *env, void *unk, uint32_t idx, int val);
 	void (*onNativeJoystickConnected) (void *env, void *unk, int dev_id, int subdev_id, int val);
 	void (*onNativeJoystickAxisMoved) (void *env, void *unk, int idx, int axisX, int axisY);
-	void (*JNI_OnLoad) (void *env) = so_symbol(&tombraider_mod, "JNI_OnLoad");;
+	void (*JNI_OnLoad) (void *env) = so_symbol(&tombraider_mod, "JNI_OnLoad");
 	
 	// Tomb Raider 1 FMVs
 	const char *fmvs[] = {
@@ -3425,7 +3425,7 @@ int main(int argc, char *argv[]) {
 			setLanguage(7);
 			break;
 		case SCE_SYSTEM_PARAM_LANG_PORTUGUESE_PT:
-			setLanguage(8);
+			setLanguage(6);
 			break;
 		case SCE_SYSTEM_PARAM_LANG_FINNISH:
 			setLanguage(10);
