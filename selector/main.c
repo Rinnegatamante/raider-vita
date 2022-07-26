@@ -98,6 +98,9 @@ int main(int argc, char *argv[]) {
 	};
 	float tex_texcoords[] = {0, 0, 1, 0, 1, 1, 0, 1};
 	int8_t selector_idx = 0;
+	while (!available_games[selector_idx]) {
+		selector_idx = (selector_idx + 1) % 2;
+	}
 	uint32_t oldpad = 0;
 	for (;;) {
 		SceCtrlData pad;
