@@ -73,6 +73,7 @@ target_link_libraries(Raider
   SceHid_stub
   SceVshBridge_stub
   SceKernelDmacmgr_stub
+  SceIme_stub
 )
 
 add_executable(companion
