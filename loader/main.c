@@ -3289,25 +3289,6 @@ void patch_game(void) {
 int main(int argc, char *argv[]) {
 	//sceSysmoduleLoadModule(SCE_SYSMODULE_RAZOR_CAPTURE);
 	
-	SceIoStat st0, st1, st2, st3, st4;
-	if (!sceIoGetstat("ux0:app/AUTOPLUG2", &st0) || !sceIoGetstat("ur0:app/AUTOPLUG2", &st1) || !sceIoGetstat("uma0:app/AUTOPLUG2", &st2) || !sceIoGetstat("imc0:app/AUTOPLUG2", &st3) || !sceIoGetstat("xmc0:app/AUTOPLUG2", &st4)) {
-		vglInit(0);
-		SceMsgDialogUserMessageParam msg_param;
-		sceClibMemset(&msg_param, 0, sizeof(SceMsgDialogUserMessageParam));
-		msg_param.buttonType = SCE_MSG_DIALOG_BUTTON_TYPE_OK;
-		msg_param.msg = (const SceChar8*)"The authors of this software (and the vast majority of the Vita dev scene) repudiates AutoPlugin due to the huge amount of problematics it causes. If you want to run this software, please uninstall AutoPlugin.";
-		SceMsgDialogParam param;
-		sceMsgDialogParamInit(&param);
-		param.mode = SCE_MSG_DIALOG_MODE_USER_MSG;
-		param.userMsgParam = &msg_param;
-		sceMsgDialogInit(&param);
-		while (sceMsgDialogGetStatus() != SCE_COMMON_DIALOG_STATUS_FINISHED) {
-			vglSwapBuffers(GL_TRUE);
-		}
-		sceKernelExitProcess(0);
-	}
-	printf("%X %X %X %X %X\n", st0, st1, st2, st3, st4);
-	
 	SceAppUtilInitParam init_param;
 	SceAppUtilBootParam boot_param;
 	memset(&init_param, 0, sizeof(SceAppUtilInitParam));
@@ -3354,6 +3335,33 @@ int main(int argc, char *argv[]) {
 	so_initialize(&tombraider_mod);
 	
 	vglInitExtended(0, SCREEN_W, SCREEN_H, MEMORY_VITAGL_THRESHOLD_MB * 1024 * 1024, SCE_GXM_MULTISAMPLE_4X);
+	
+	int search_unk[2];
+	SceIoStat st0, st1, st2, st3, st4;
+	int is_ap_on = 0;
+	int is_bypass_on = _vshKernelSearchModuleByName("hideautopl", search_unk) >= 0;
+	if (is_bypass_on ||
+		!sceIoGetstat("ux0:app/AUTOPLUG2", &st0) ||
+		!sceIoGetstat("ur0:app/AUTOPLUG2", &st1) ||
+		!sceIoGetstat("uma0:app/AUTOPLUG2", &st2) ||
+		!sceIoGetstat("imc0:app/AUTOPLUG2", &st3) ||
+		!sceIoGetstat("xmc0:app/AUTOPLUG2", &st4)) {
+		SceMsgDialogUserMessageParam msg_param;
+		sceClibMemset(&msg_param, 0, sizeof(SceMsgDialogUserMessageParam));
+		msg_param.buttonType = SCE_MSG_DIALOG_BUTTON_TYPE_OK;
+		msg_param.msg = (const SceChar8*)"AutoPlugin 2 installation has been detected. The authors of this software encourage to get rid of it.\nBy proceeding, you agree at submitting any request for help to Henkaku Discord Server #help-and-support channel. Invitation Link: https://discord.gg/m7MwpKA.\nAny request of help to the original authors will be ignored unless you get rid of AutoPlugin 2.";
+		SceMsgDialogParam param;
+		sceMsgDialogParamInit(&param);
+		param.mode = SCE_MSG_DIALOG_MODE_USER_MSG;
+		param.userMsgParam = &msg_param;
+		sceMsgDialogInit(&param);
+		while (sceMsgDialogGetStatus() != SCE_COMMON_DIALOG_STATUS_FINISHED) {
+			vglSwapBuffers(GL_TRUE);
+		}
+		sceMsgDialogTerm();
+		is_ap_on = 1;
+	}
+	printf("AP2 State: %s\nBypass State: %s\n", is_ap_on ? "yes" : "no", is_bypass_on ? "yes" : "no");
 	
 	memset(fake_vm, 'A', sizeof(fake_vm));
 	*(uintptr_t *)(fake_vm + 0x00) = (uintptr_t)fake_vm; // just point to itself...
