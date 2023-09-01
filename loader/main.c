@@ -42,6 +42,7 @@
 #include "dialog.h"
 #include "so_util.h"
 #include "sha1.h"
+#include "trophies.h"
 
 #ifdef DEBUG
 #define dlog printf
@@ -2601,6 +2602,10 @@ int S_CheckPendingFMV() {
 	return 0;
 }
 
+void S_GameCenterUnlock(int id) {
+	trophies_unlock(id);
+}
+
 void patch_game(void) {
 	// Tomb Raider 2 related patches
 	hook_addr(so_symbol(&tombraider_mod, "S_CheckPendingFMV"), (uintptr_t)&S_CheckPendingFMV);
@@ -2614,6 +2619,7 @@ void patch_game(void) {
 	hook_addr(so_symbol(&tombraider_mod, "S_FileUpdatedFromCloud"), (uintptr_t)&ret0);
 	hook_addr(so_symbol(&tombraider_mod, "Android_JNI_SocialShareURL"), (uintptr_t)&ret0);
 	hook_addr(so_symbol(&tombraider_mod, "Android_JNI_ShowToast"), (uintptr_t)&ret0);
+	hook_addr(so_symbol(&tombraider_mod, "S_GameCenterUnlock"), (uintptr_t)&S_GameCenterUnlock);
 
 	//hook_addr(so_symbol(&tombraider_mod, "SDL_AddBasicVideoDisplay"), (uintptr_t)&SDL_AddBasicVideoDisplay);
 	//hook_addr(so_symbol(&tombraider_mod, "SDL_AddDisplayMode"), (uintptr_t)&SDL_AddDisplayMode);
@@ -3286,6 +3292,7 @@ void patch_game(void) {
 	hook_addr(so_symbol(&tombraider_mod, "SDL_wcslen"), (uintptr_t)&SDL_wcslen);
 }
 
+int8_t game_idx;
 int main(int argc, char *argv[]) {
 	//sceSysmoduleLoadModule(SCE_SYSMODULE_RAZOR_CAPTURE);
 	
@@ -3295,7 +3302,6 @@ int main(int argc, char *argv[]) {
 	memset(&boot_param, 0, sizeof(SceAppUtilBootParam));
 	sceAppUtilInit(&init_param, &boot_param);
 	
-	sceCtrlSetSamplingModeExt(SCE_CTRL_MODE_ANALOG_WIDE);
 	uint8_t is_pstv = sceCtrlIsMultiControllerSupported() ? GL_TRUE : GL_FALSE;
 	if (!is_pstv) {
 		sceTouchSetSamplingState(SCE_TOUCH_PORT_FRONT, SCE_TOUCH_SAMPLING_STATE_START);
@@ -3314,7 +3320,7 @@ int main(int argc, char *argv[]) {
 	
 	// Generating selected game path
 	char fname[256];
-	int8_t game_idx = 1;
+	game_idx = 1;
 	FILE *f = fopen("ux0:data/tombraider.tmp", "rb");
 	if (f) {
 		fread(&game_idx, 1, 1, f);
@@ -3336,32 +3342,16 @@ int main(int argc, char *argv[]) {
 	
 	vglInitExtended(0, SCREEN_W, SCREEN_H, MEMORY_VITAGL_THRESHOLD_MB * 1024 * 1024, SCE_GXM_MULTISAMPLE_4X);
 	
-	int search_unk[2];
-	SceIoStat st0, st1, st2, st3, st4;
-	int is_ap_on = 0;
-	int is_bypass_on = _vshKernelSearchModuleByName("hideautopl", search_unk) >= 0;
-	if (is_bypass_on ||
-		!sceIoGetstat("ux0:app/AUTOPLUG2", &st0) ||
-		!sceIoGetstat("ur0:app/AUTOPLUG2", &st1) ||
-		!sceIoGetstat("uma0:app/AUTOPLUG2", &st2) ||
-		!sceIoGetstat("imc0:app/AUTOPLUG2", &st3) ||
-		!sceIoGetstat("xmc0:app/AUTOPLUG2", &st4)) {
-		SceMsgDialogUserMessageParam msg_param;
-		sceClibMemset(&msg_param, 0, sizeof(SceMsgDialogUserMessageParam));
-		msg_param.buttonType = SCE_MSG_DIALOG_BUTTON_TYPE_OK;
-		msg_param.msg = (const SceChar8*)"AutoPlugin 2 installation has been detected. The authors of this software encourage users to uninstall it, since it's well known to be cause of a lot of issues for a wide amount of users.\nBy proceeding, you agree to submit any request for help to the Henkaku Discord Server #help-and-support channel. Invitation Link: https://discord.gg/m7MwpKA.\nAny request for help to the original authors will be ignored unless  AutoPlugin 2 is uninstalled or a server helper agrees the issue is not caused by AutoPlugin 2.";
-		SceMsgDialogParam param;
-		sceMsgDialogParamInit(&param);
-		param.mode = SCE_MSG_DIALOG_MODE_USER_MSG;
-		param.userMsgParam = &msg_param;
-		sceMsgDialogInit(&param);
-		while (sceMsgDialogGetStatus() != SCE_COMMON_DIALOG_STATUS_FINISHED) {
-			vglSwapBuffers(GL_TRUE);
-		}
-		sceMsgDialogTerm();
-		is_ap_on = 1;
+	// Initing trophy system
+	SceIoStat st;
+	int r = trophies_init();
+	if (r < 0 && sceIoGetstat(TROPHIES_FILE, &st) < 0) {
+		FILE *f = fopen(TROPHIES_FILE, "w");
+		fclose(f);
+		warning("This game features unlockable trophies but NoTrpDrm is not installed. If you want to be able to unlock trophies, please install it.");
 	}
-	printf("AP2 State: %s\nBypass State: %s\n", is_ap_on ? "yes" : "no", is_bypass_on ? "yes" : "no");
+	
+	sceCtrlSetSamplingModeExt(SCE_CTRL_MODE_ANALOG_WIDE);
 	
 	memset(fake_vm, 'A', sizeof(fake_vm));
 	*(uintptr_t *)(fake_vm + 0x00) = (uintptr_t)fake_vm; // just point to itself...

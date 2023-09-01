@@ -24,6 +24,7 @@ add_executable(Raider
   loader/sha1.c
   loader/ctype_patch.c
   loader/fmv.c
+  loader/trophies.c
 )
 
 target_link_libraries(Raider
@@ -64,6 +65,7 @@ target_link_libraries(Raider
   SceFios2_stub
   SceGxm_stub
   SceLibcBridge_stub
+  SceNpTrophy_stub
   SceAvPlayer_stub
   SceShaccCg_stub
   SceSysmodule_stub
@@ -140,6 +142,7 @@ vita_create_vpk(Raider.vpk ${VITA_TITLEID} eboot.bin
        ${CMAKE_SOURCE_DIR}/sce_sys/livearea/contents/bg0.png sce_sys/livearea/contents/bg0.png
        ${CMAKE_SOURCE_DIR}/sce_sys/livearea/contents/scion_xian.png sce_sys/livearea/contents/scion_xian.png
        ${CMAKE_SOURCE_DIR}/sce_sys/livearea/contents/template.xml sce_sys/livearea/contents/template.xml
+       ${CMAKE_SOURCE_DIR}/sce_sys/trophy/RAID00001_00/TROPHY.TRP sce_sys/trophy/RAID00001_00/TROPHY.TRP
 	   ${CMAKE_BINARY_DIR}/game.bin game.bin
 	   ${CMAKE_SOURCE_DIR}/images/game1.png images/game1.png
 	   ${CMAKE_SOURCE_DIR}/images/game2.png images/game2.png
