@@ -1252,7 +1252,7 @@ float CallStaticFloatMethodV(void *env, void *obj, int methodID, uintptr_t *args
 	}
 }
 
-char localized_str[650][256];
+char localized_str[651][256];
 const char *S_LocalizedString(int id) {
 	return localized_str[id];
 }
@@ -2202,12 +2202,17 @@ int main(int argc, char *argv[]) {
 		fread(buf, 1, sz, f);
 		fclose(f);
 		buf[sz] = 0;
-		for (int i = 0; i < 650; i++) {
+		for (int i = 0; i <= 650; i++) {
 			sprintf(locale, "<string name=\"$%d\">", i);
-			char *s = strstr(buf, locale) + strlen(locale);
-			char *end = strstr(s, "</string>");
-			memcpy(localized_str[i], s, end - s);
-			localized_str[i][end - s] = 0;
+			char *s = strstr(buf, locale);
+			if (s) {
+				s += strlen(locale);
+				char *end = strstr(s, "</string>");
+				memcpy(localized_str[i], s, end - s);
+				localized_str[i][end - s] = 0;
+			} else {
+				localized_str[i][0] = 0;
+			}
 		}
 		free(buf);
 	}
