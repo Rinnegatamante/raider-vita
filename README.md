@@ -9,16 +9,21 @@ By doing so, it's basically as if we emulate a minimalist Android environment in
 
 ## Changelog
 
-### V1.1
+### v.1.2
+
+- Added multilanguage (English, Italian, German, French, Spanish, Portuguese (BR), Portuguese (PT)) for Tomb Raider 2.
+- Updated to latest vitaGL commit.
+
+### v.1.1
 
 - Added trophies support.
 - Updated to latest vitaGL commit.
 
-### v1.0.1
+### v.1.0.1
 
 - Added front touch mapping for L2/L3/R2/R3 on non PSTV devices.
 
-### v1.0
+### v.1.0
 
 - Initial release.
 
