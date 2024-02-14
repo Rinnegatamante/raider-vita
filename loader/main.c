@@ -1048,7 +1048,7 @@ static so_default_dynlib default_dynlib[] = {
 	{ "glTexParameterf", (uintptr_t)&glTexParameterf},
 	{ "glPixelStorei", (uintptr_t)&ret0},
 	{ "glCompressedTexImage2D", (uintptr_t)&glCompressedTexImage2D},
-	{ "glGenerateMipmap", (uintptr_t)&glGenerateMipmap},
+	{ "glGenerateMipmap", (uintptr_t)&ret0},
 	{ "_ZdlPv", (uintptr_t)&_ZdlPv},
 	{ "glGetString", (uintptr_t)&glGetString},
 	{ "glGetFloatv", (uintptr_t)&glGetFloatv},
