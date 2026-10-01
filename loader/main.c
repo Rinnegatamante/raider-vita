@@ -2091,12 +2091,12 @@ int main(int argc, char *argv[]) {
 	// Disabling rearpad
 	SDL_setenv("VITA_DISABLE_TOUCH_BACK", "1", 1);
 	
-	void (*nativeDrawFrame) (void *env, void *unk, int unk2) = so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider2classic_SDLActivity_nativeDrawFrame");
+	void (*nativeDrawFrame) (void *env, void *unk, int unk2) = (void (*)(void *, void *, int))so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider2classic_SDLActivity_nativeDrawFrame");
 	int (*requestFMV) () = NULL;
 	void (*onNativeJoystickButton) (void *env, void *unk, uint32_t idx, int val);
 	void (*onNativeJoystickConnected) (void *env, void *unk, int dev_id, int subdev_id, int val);
 	void (*onNativeJoystickAxisMoved) (void *env, void *unk, int idx, int axisX, int axisY);
-	void (*JNI_OnLoad) (void *env) = so_symbol(&tombraider_mod, "JNI_OnLoad");
+	void (*JNI_OnLoad) (void *env) = (void (*)(void *))so_symbol(&tombraider_mod, "JNI_OnLoad");
 	
 	// Tomb Raider 1 FMVs
 	const char *fmvs[] = {
@@ -2114,14 +2114,14 @@ int main(int argc, char *argv[]) {
 	};
 	
 	if (!nativeDrawFrame) { // Tomb Raider 1
-		nativeDrawFrame = so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider1classic_SDLActivity_nativeDrawFrame");
-		requestFMV = so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider1classic_SDLActivity_requestFMV");
-		onNativeJoystickButton = so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider1classic_SDLActivity_onNativeJoystickButton");
-		onNativeJoystickConnected = so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider1classic_SDLActivity_onNativeJoystickConnected");
-		onNativeJoystickAxisMoved = so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider1classic_SDLActivity_onNativeJoystickAxisMoved");
+		nativeDrawFrame = (void (*)(void *, void *, int))so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider1classic_SDLActivity_nativeDrawFrame");
+		requestFMV = (int (*)(void))so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider1classic_SDLActivity_requestFMV");
+		onNativeJoystickButton = (void (*)(void *, void *, uint32_t, int))so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider1classic_SDLActivity_onNativeJoystickButton");
+		onNativeJoystickConnected = (void (*)(void *, void *, int, int, int))so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider1classic_SDLActivity_onNativeJoystickConnected");
+		onNativeJoystickAxisMoved = (void (*)(void *, void *, int, int, int))so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider1classic_SDLActivity_onNativeJoystickAxisMoved");
 		
 		// Set Language
-		void (*setLanguage) (int id) = so_symbol(&tombraider_mod, "SetLanguage");
+		void (*setLanguage) (int id) = (void (*)(int))so_symbol(&tombraider_mod, "SetLanguage");
 		int lang = -1;
 		sceAppUtilSystemParamGetInt(SCE_SYSTEM_PARAM_ID_LANG, &lang);
 		switch (lang) {
@@ -2154,11 +2154,11 @@ int main(int argc, char *argv[]) {
 			break;
 		}
 	} else { // Tomb Raider 2
-		nativeDrawFrame = so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider2classic_SDLActivity_nativeDrawFrame");
-		onNativeJoystickButton = so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider2classic_SDLActivity_onNativeJoystickButton");
-		onNativeJoystickConnected = so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider2classic_SDLActivity_onNativeJoystickConnected");
-		onNativeJoystickAxisMoved = so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider2classic_SDLActivity_onNativeJoystickAxisMoved");
-		void (*nativeSetLanguage) (void *env, void *unk, char *locale) = so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider2classic_SDLActivity_nativeSetLanguage");
+		nativeDrawFrame = (void (*)(void *, void *, int))so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider2classic_SDLActivity_nativeDrawFrame");
+		onNativeJoystickButton = (void (*)(void *, void *, uint32_t, int))so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider2classic_SDLActivity_onNativeJoystickButton");
+		onNativeJoystickConnected = (void (*)(void *, void *, int, int, int))so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider2classic_SDLActivity_onNativeJoystickConnected");
+		onNativeJoystickAxisMoved = (void (*)(void *, void *, int, int, int))so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider2classic_SDLActivity_onNativeJoystickAxisMoved");
+		void (*nativeSetLanguage) (void *env, void *unk, char *locale) = (void (*)(void *, void *, char *))so_symbol(&tombraider_mod, "Java_com_squareenix_tombraider2classic_SDLActivity_nativeSetLanguage");
 		
 		// Set Language
 		char locale[256];
